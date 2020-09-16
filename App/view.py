@@ -38,7 +38,10 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-details = "Data/AllMoviesDetailsCleaned.csv"
+casting_small = "Data/MoviesCastingRaw-small.csv"
+details_small = "Data/SmallMoviesDetailsCleaned.csv"
+casting_large = "Data/AllMoviesCastingRaw.csv"
+details_large = "Data/AllMoviesDetailsCleaned.csv"
 
 # ___________________________________________________
 #  Funciones para imprimir la inforamación de
@@ -53,33 +56,48 @@ def printMovieData(element):
     print("c. Número de votos: "+element["vote_count"])
     print("d. Idioma: "+element["original_language"]+"\n")
 
+def printMoviesNames(lst):
+    print("Las películas son:")
+    iterator = it.newIterator(lst)
+    i=1
+    while  it.hasNext(iterator):
+        element = it.next(iterator)
+        print(str(i)+"- "+element["title"])
+        i += 1 
+
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
 
 def printMenu():
     print("Bienvenido")
-    print("1- Iniciar lista")
-    print("2- Cargar peliculas a la lista lista")
+    print("1- Iniciar catalogo del películas")
+    print("2- Cargar películas al catalogo del películas")
+    print("3- Descubrir productoras de cine ")
     print("0- Salir")
 
-"""
-Menu principal
-"""
+
 while True:
     printMenu()
     inputs = input('Seleccione una opción para continuar\n')
 
     if int(inputs[0]) == 1:
-        print("Iniciando lista ....")
-        lista = controller.iniciarLista()
-        print("Se creo lista con exito")
+        print("Iniciando catalogo ....")
+        catalogo = controller.iniciarCatalogo()
+        print("Se creo el catalogo con exito")
     elif int(inputs[0]) == 2:
         print("Cargando películas ....")
-        size,first,last = controller.cargarPeliculas(lista, details)
+        catalog,size,first,last = controller.cargarPeliculas(catalogo, casting_large, details_large)
         print("Se cargaron "+str(size)+ " películas"+"\n")
         printMovieData(first)
         printMovieData(last)
+    elif int(inputs[0]) == 3:
+        comp_name = input("Ingrese el nombre de la productora de cine que quiere buscar\n")
+        movies,size,vote_avarage = controller.getMoviesByProdComp(catalog, comp_name)
+        print("La productora "+comp_name+" tiene "+str(size)+ " películas. \n")
+        print("El promedio de la calificación de sus películas es "+str(vote_avarage) +"\n")
+        printMoviesNames(movies)
+        print("\n")
     else:
         sys.exit(0)
 sys.exit(0)

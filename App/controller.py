@@ -32,22 +32,38 @@ el modelo varias veces o integrar varias de las respuestas
 del modelo en una sola respuesta. Esta responsabilidad
 recae sobre el controlador.
 """
-
 # ___________________________________________________
 #  Inicializacion del catalogo
 # ___________________________________________________
 
-def iniciarLista():
-    lista = model.iniciarTADLista()
-    return lista
+def iniciarCatalogo():
+    catalog = model.newCatalog()
+    return catalog
 
 # ___________________________________________________
 #  Funciones para la carga de datos y almacenamiento
 #  de datos en los modelos
 # ___________________________________________________
 
-def cargarPeliculas(lst, file):
-    lista = model.cargarPeliculas(lst,file)
+def cargarPeliculas(empty_catalog, casting, details):
+    catalog = model.loadMovies(empty_catalog,casting, details)
+    lista = catalog["movies"]
     first = lt.getElement(lista,1)
     last = lt.lastElement(lista)
-    return(lt.size(lista),first,last)
+    return(catalog, lt.size(lista),first,last)
+
+# ___________________________________________________
+#  Funciones para consultas
+# ___________________________________________________
+
+def getMoviesByProdComp(catalog, comp_name):
+    """
+    Retorna una compañia de produccion con sus películas,
+    la cantidad de películas y su vote_avarage
+    """
+    company = model.getMoviesByProdComp(catalog, comp_name)
+    movies = company['movies']
+    size = model.moviesSize(movies)
+    avarage = company["vote_average"]
+    return (movies,size,avarage)
+
