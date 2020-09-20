@@ -23,6 +23,7 @@
 import config as cf
 from App import model
 from DISClib.ADT import list as lt
+from time import process_time 
 import csv
 
 """
@@ -46,10 +47,13 @@ def iniciarCatalogo():
 # ___________________________________________________
 
 def cargarPeliculas(empty_catalog, casting, details):
+    t1_start = process_time() #tiempo inicial
     catalog = model.loadMovies(empty_catalog,casting, details)
     lista = catalog["movies"]
     first = lt.getElement(lista,1)
     last = lt.lastElement(lista)
+    t1_stop = process_time() #tiempo final
+    print("Tiempo de ejecución ",(t1_stop-t1_start)," segundos")
     return(catalog, lt.size(lista),first,last)
 
 # ___________________________________________________
@@ -64,6 +68,13 @@ def getMoviesByProdComp(catalog, comp_name):
     company = model.getMoviesByProdComp(catalog, comp_name)
     movies = company['movies']
     size = model.moviesSize(movies)
-    avarage = company["vote_average"]
+    avarage = (company["vote_average"]/int(size))
     return (movies,size,avarage)
 
+def getMoviesByActor(catalog, actor_name):
+    actor = model.getMoviesByActor(catalog, actor_name)
+    director = model.getMostFeaturedDirector(actor)
+    movies = actor['movies']
+    size = model.moviesSize(movies)
+    avarage = (actor["vote_average"]/int(size))
+    return (movies,size,avarage,director)

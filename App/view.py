@@ -56,15 +56,14 @@ def printMovieData(element):
     print("c. Número de votos: "+element["vote_count"])
     print("d. Idioma: "+element["original_language"]+"\n")
 
-def printMoviesNames(lst):
+def printList(lst):
     print("Las películas son:")
     iterator = it.newIterator(lst)
     i=1
     while  it.hasNext(iterator):
         element = it.next(iterator)
-        print(str(i)+"- "+element["title"])
+        print(str(i)+"- "+element)
         i += 1 
-
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -74,6 +73,7 @@ def printMenu():
     print("1- Iniciar catalogo del películas")
     print("2- Cargar películas al catalogo del películas")
     print("3- Descubrir productoras de cine ")
+    print("5- Conocer a un actor ")
     print("0- Salir")
 
 
@@ -96,7 +96,15 @@ while True:
         movies,size,vote_avarage = controller.getMoviesByProdComp(catalog, comp_name)
         print("La productora "+comp_name+" tiene "+str(size)+ " películas. \n")
         print("El promedio de la calificación de sus películas es "+str(vote_avarage) +"\n")
-        printMoviesNames(movies)
+        printList(movies)
+        print("\n")
+    elif int(inputs[0]) == 5:
+        actor_name = input("Ingrese el nombre del actor que quiere buscar\n")
+        movies,size,vote_avarage,director = controller.getMoviesByActor(catalog, actor_name)
+        print(actor_name+" tiene "+str(size)+ " películas. \n")
+        print("El promedio de la calificación de sus películas es "+str(vote_avarage) +"\n")
+        print("El director con quien mas ha trabajado es "+director +"\n")
+        printList(movies)
         print("\n")
     else:
         sys.exit(0)
