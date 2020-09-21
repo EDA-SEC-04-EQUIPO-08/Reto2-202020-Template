@@ -72,7 +72,7 @@ def newActor(name):
     el promedio de ratings y los directores 
     con quien ha trabajado de un actor
     """
-    actor = {'name': "", "movies": None, "vote_average": 0, "directors":None}
+    actor = {'name': "", "movies": None, "vote_average": 0, "directors":None, "most_feat":"No existe", "most_times":0}
     actor['name'] = name
     actor['movies'] = lt.newList('SINGLE_LINKED', compareText)
     actor["directors"] = mp.newMap(40, 
@@ -161,11 +161,16 @@ def addActor(catalog, movie):
                 entry = mp.get(actor_dir, director_name)
                 times = (me.getValue(entry) + 1)
                 me.setValue(entry, times)
+                if times > actor["most_times"]:
+                    actor["most_times"] = times
+                    actor["most_feat"] = director_name
             else:
                 if director_name != "none":
                     times1 = 1
                     mp.put(actor_dir, director_name, times1)
-
+                    if times1 > actor["most_times"]:
+                        actor["most_times"] = times1
+                        actor["most_feat"] = director_name
 
 
 # ==============================
@@ -189,23 +194,6 @@ def getMoviesByActor(catalog, actor_name):
     if actor:
         return me.getValue(actor)
     return None
-
-def getMostFeaturedDirector(actor):
-    """
-    Retorna el director con más colaboraciones
-    """
-    directors = actor["directors"]["table"]
-    mayor = 0
-    most_feat = "No existe" 
-    iterator = it.newIterator(directors)
-    while it.hasNext(iterator):
-        director = it.next(iterator)
-        feat_times = me.getValue(director)
-        if feat_times != None:      
-            if feat_times > mayor:   
-                mayor = feat_times
-                most_feat = me.getKey(director)
-    return most_feat
 
 
 def moviesSize(lst):
