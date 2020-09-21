@@ -73,7 +73,7 @@ def getMoviesByProdComp(catalog, comp_name):
 
 def getMoviesByActor(catalog, actor_name):
     actor = model.getMoviesByActor(catalog, actor_name)
-    director = model.getMostFeaturedDirector(actor)
+    director = actor["most_feat"]
     movies = actor['movies']
     size = model.moviesSize(movies)
     avarage = (actor["vote_average"]/int(size))
