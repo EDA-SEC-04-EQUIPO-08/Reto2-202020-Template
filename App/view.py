@@ -38,10 +38,10 @@ operación seleccionada.
 #  Ruta a los archivos
 # ___________________________________________________
 
-casting_small = "Data/MoviesCastingRaw-small.csv"
-details_small = "Data/SmallMoviesDetailsCleaned.csv"
-casting_large = "Data/AllMoviesCastingRaw.csv"
-details_large = "Data/AllMoviesDetailsCleaned.csv"
+casting_small = "Data/themoviesdb/MoviesCastingRaw-small.csv"
+details_small = "Data/themoviesdb/SmallMoviesDetailsCleaned.csv"
+casting_large = "Data/themoviesdb/AllMoviesCastingRaw.csv"
+details_large = "Data/themoviesdb/AllMoviesDetailsCleaned.csv"
 
 # ___________________________________________________
 #  Funciones para imprimir la inforamación de
@@ -73,7 +73,9 @@ def printMenu():
     print("1- Iniciar catalogo del películas")
     print("2- Cargar películas al catalogo del películas")
     print("3- Descubrir productoras de cine ")
+    print("4- Conocer a un director ")
     print("5- Conocer a un actor ")
+    print("6- Entender un genero ")
     print("0- Salir")
 
 
@@ -93,17 +95,35 @@ while True:
         printMovieData(last)
     elif int(inputs[0]) == 3:
         comp_name = input("Ingrese el nombre de la productora de cine que quiere buscar\n")
-        movies,size,vote_avarage = controller.getMoviesByProdComp(catalog, comp_name)
+        movies,size,vote_avarage = controller.getMoviesByProdComp(catalogo, comp_name)
+        print("\n")
         print("La productora "+comp_name+" tiene "+str(size)+ " películas. \n")
+        print("El promedio de la calificación de sus películas es "+str(vote_avarage) +"\n")
+        printList(movies)
+        print("\n")
+    elif int(inputs[0]) == 4:
+        director_name = input("Ingrese el nombre del director que quiere buscar\n")
+        movies,size,vote_avarage = controller.getMoviesByDirector(catalogo, director_name)
+        print("\n")
+        print(director_name+" tiene "+str(size)+ " películas. \n")
         print("El promedio de la calificación de sus películas es "+str(vote_avarage) +"\n")
         printList(movies)
         print("\n")
     elif int(inputs[0]) == 5:
         actor_name = input("Ingrese el nombre del actor que quiere buscar\n")
-        movies,size,vote_avarage,director = controller.getMoviesByActor(catalog, actor_name)
+        movies,size,vote_avarage,director = controller.getMoviesByActor(catalogo, actor_name)
+        print("\n")
         print(actor_name+" tiene "+str(size)+ " películas. \n")
         print("El promedio de la calificación de sus películas es "+str(vote_avarage) +"\n")
         print("El director con quien mas ha trabajado es "+director +"\n")
+        printList(movies)
+        print("\n")
+    elif int(inputs[0]) == 6:
+        genre_name = input("Ingrese el genero que quiere buscar\n")
+        movies,size,vote_count = controller.getMoviesByGenre(catalogo, genre_name)
+        print("\n")
+        print(str(size)+ " películas son del genero " + genre_name + "\n")
+        print("El promedio de la calificación de las películas es "+str(vote_count) +"\n")
         printList(movies)
         print("\n")
     else:

@@ -42,7 +42,7 @@ def newCatalog():
                'country': None,
                'director': None,
                'actor': None,
-               'genre': None,}
+               'genre': None}
 
     catalog['movies'] = lt.newList('SINGLE_LINKED', compareRecordIds)
     catalog['productionCompany'] = mp.newMap(825000,  #471428,  825000
@@ -53,7 +53,14 @@ def newCatalog():
                                    maptype='CHAINING', 
                                    loadfactor=10, #CHAINING 10 , PROBING 0.4
                                    comparefunction=compareNameInEntry)
-
+    catalog['director'] = mp.newMap(825000,  #471428,  825000
+                                   maptype='CHAINING', 
+                                   loadfactor=10, #CHAINING 10 , PROBING 0.4
+                                   comparefunction=compareNameInEntry)
+    catalog['genre'] = mp.newMap(825000,  #471428,  825000
+                                   maptype='CHAINING', 
+                                   loadfactor=10, #CHAINING 10 , PROBING 0.4
+                                   comparefunction=compareNameInEntry)
     return catalog
 
 def newProductionCompany(name):
@@ -81,6 +88,27 @@ def newActor(name):
                                    comparefunction=compareNameInEntry)
     return actor
 
+def newDirector(name):
+    """
+    Crea una nueva estructura para modelar las películas,
+    el promedio de ratings de un director
+    """
+    director = {'name': "", "movies": None, "vote_average": 0}
+    director['name'] = name
+    director['movies'] = lt.newList('SINGLE_LINKED', compareText)
+
+    return director
+
+def newGenre(name):
+    """
+    Crea una nueva estructura para modelar las películas,
+    el promedio de ratings de un genero
+    """
+    genre = {"name":"", "movies": None, "vote_count": 0}
+    genre["name"] = name
+    genre["movies"] = lt.newList('SINGLE_LINKED', compareText)
+
+    return genre
 # Funciones para agregar informacion al catalogo
 
 def loadMovies(catalog, fileCasting, fileDetails):
@@ -100,7 +128,9 @@ def loadMovies(catalog, fileCasting, fileDetails):
                 element = it.next(iterator)
                 element.update(elemento)
                 addProductionCompany(catalog,element)     #Se añade la película al map de Production Company
-                addActor(catalog,element)          #Se añade la película al map de actor
+                addActor(catalog,element)                 #Se añade la película al map de actor
+                addDirector(catalog,element)              #Se añade la película al map de director
+                addGenre(catalog,element)                 #Se añade la película al map de genre
     except:
         print("Hubo un error con la carga de los archivos")
     return catalog
@@ -166,6 +196,53 @@ def addActor(catalog, movie):
                     times1 = 1
                     mp.put(actor_dir, director_name, times1)
 
+def addDirector(catalog, movie):
+    """
+    Esta función adiciona una pelicula por su director en el map
+    """
+    directors = catalog['director']
+    director_name = movie["director_name"].lower()
+    movie_avg = movie['vote_average']
+    title = movie["title"]
+    if director_name != "none":
+        existDirector = mp.contains(directors, director_name)
+        if existDirector:
+            entry = mp.get(directors, director_name)
+            director = me.getValue(entry)
+        else:
+            director = newDirector(director_name)
+            mp.put(directors, director_name, director)
+        lt.addLast(director['movies'], title)
+        director_avg = director['vote_average']      
+        if (director_avg == 0.0):
+            director['vote_average'] = float(movie_avg)
+        else:
+            director['vote_average'] = director_avg + float(movie_avg)
+
+def addGenre(catalog, movie):
+    """
+    Esta función adiciona una pelicula por su director en el map
+    """
+    genres= catalog["genre"]
+    genre_names = movie["genres"].split("|")
+    movie_count = movie["vote_count"]
+    title = movie["title"]
+    for genres1 in genre_names:
+        genre_name = genres1.lower()
+        if genre_name != "none":
+            existGenre =mp.contains(genres,genre_name)
+            if existGenre:
+                entry = mp.get(genres,genre_name)
+                genre = me.getValue(entry)
+            else:
+                genre = newGenre(genre_name)
+                mp.put(genres,genre_name,genre)
+            lt.addLast(genre['movies'],title)
+            genre_count = genre['vote_count']
+            if (genre_count == 0.0):
+                genre['vote_count'] = float(movie_count)
+            else:
+                genre['vote_count'] = genre_count + float(movie_count)
 
 
 # ==============================
@@ -207,6 +284,24 @@ def getMostFeaturedDirector(actor):
                 most_feat = me.getKey(director)
     return most_feat
 
+def getMoviesByDirector(catalog, director_name):
+    """
+    Retorna un director con sus películas
+    """
+    director = mp.get(catalog['director'], director_name.lower())
+    if director:
+        return me.getValue(director)
+    return None
+
+def getMoviesByGenre(catalog, genre_name):
+    """
+    Retorna las películas de un genero
+    """
+    genre = mp.get(catalog["genre"],genre_name.lower())
+    if genre:
+        return me.getValue(genre)
+    else:
+        return None   
 
 def moviesSize(lst):
     return lt.size(lst)

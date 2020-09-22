@@ -65,6 +65,7 @@ def getMoviesByProdComp(catalog, comp_name):
     Retorna una compañia de produccion con sus películas,
     la cantidad de películas y su vote_avarage
     """
+    
     company = model.getMoviesByProdComp(catalog, comp_name)
     movies = company['movies']
     size = model.moviesSize(movies)
@@ -78,3 +79,17 @@ def getMoviesByActor(catalog, actor_name):
     size = model.moviesSize(movies)
     avarage = (actor["vote_average"]/int(size))
     return (movies,size,avarage,director)
+
+def getMoviesByDirector(catalog, director_name):
+    director = model.getMoviesByDirector(catalog, director_name)
+    movies = director['movies']
+    size = model.moviesSize(movies)
+    avarage = (director["vote_average"]/int(size))
+    return (movies,size,avarage)
+
+def getMoviesByGenre(catalog,genre_name):
+    genre = model.getMoviesByGenre(catalog,genre_name)
+    movies = genre["movies"]
+    size = model.moviesSize(movies)
+    count = (genre["vote_count"]/int(size))
+    return (movies,size,count)
