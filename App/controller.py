@@ -94,3 +94,9 @@ def getMoviesByGenre(catalog,genre_name):
     count = (genre["vote_count"]/int(size))
     return (movies,size,count)
 
+def getMoviesByCountry (catalog,country_name):
+    country = model.getMoviesByCountry(catalog,country_name)
+    movies = country["movies"]
+    return movies
+
+
