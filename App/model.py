@@ -61,6 +61,10 @@ def newCatalog():
                                    maptype='CHAINING', 
                                    loadfactor=10, #CHAINING 10 , PROBING 0.4
                                    comparefunction=compareNameInEntry)
+    catalog['country'] = mp.newMap(825000,  #471428,  825000
+                                   maptype='CHAINING', 
+                                   loadfactor=10, #CHAINING 10 , PROBING 0.4
+                                   comparefunction=compareNameInEntry)
     return catalog
 
 def newProductionCompany(name):
@@ -109,6 +113,12 @@ def newGenre(name):
     genre["movies"] = lt.newList('SINGLE_LINKED', compareText)
 
     return genre
+
+def newCountry(name):
+    country = {"name":"", "movies":None}
+    country["name"]=name
+    country["movies"] = lt.newList('SINGLE_LINKED', compareText)
+    return country
 # Funciones para agregar informacion al catalogo
 
 def loadMovies(catalog, fileCasting, fileDetails):
@@ -131,6 +141,8 @@ def loadMovies(catalog, fileCasting, fileDetails):
                 addActor(catalog,element)                 #Se añade la película al map de actor
                 addDirector(catalog,element)              #Se añade la película al map de director
                 addGenre(catalog,element)                 #Se añade la película al map de genre
+                addCountry(catalog,element)               #Se añade la película al map de country
+
     except:
         print("Hubo un error con la carga de los archivos")
     return catalog
@@ -250,6 +262,27 @@ def addGenre(catalog, movie):
             else:
                 genre['vote_count'] = genre_count + float(movie_count)
 
+def addCountry (catalog,movie):
+    """
+    Esta función adiciona una pelicula por su país en el map
+    """
+    country = catalog["country"]
+    country_name = movie["production_countries"].lower()
+    movie_year= (movie["release_date"]+" ")[-5:-1]
+    movie_director = movie["director_name"]
+    title = movie["title"]
+    if country_name != "none":
+        existsCountry =mp.contains(country,country_name)
+        if existsCountry: 
+            entry = mp.get(country, country_name)
+            pais = me.getValue(entry)
+        else:
+            pais = newCountry(country_name)
+            mp.put(country,country_name,pais)
+        lt.addLast(pais["movies"],(title,movie_year,movie_director))
+    
+
+
 
 # ==============================
 # Funciones de consulta
@@ -290,10 +323,22 @@ def getMoviesByGenre(catalog, genre_name):
     if genre:
         return me.getValue(genre)
     else:
-        return None   
+        return None  
+
+def getMoviesByCountry(catalog,country_name):
+    """
+    Retorna las películas de un país
+    """
+    country = mp.get(catalog["country"],country_name.lower())
+    if country:
+        return me.getValue(country)
+    else:
+        return None
 
 def moviesSize(lst):
     return lt.size(lst)
+
+
 
 # ==============================
 # Funciones de Comparacion

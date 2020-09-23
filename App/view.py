@@ -64,6 +64,14 @@ def printList(lst):
         element = it.next(iterator)
         print(str(i)+"- "+element)
         i += 1 
+def printListTuple(lst):
+    print("Las películas son:")
+    iterator = it.newIterator(lst)
+    i=1
+    while  it.hasNext(iterator):
+        element = it.next(iterator)
+        print(str(i)+"- "+element[0]+"\nDirigida por: "+element[2]+"\nLanzada en el año: "+element[1]+"\n")
+        i += 1 
 # ___________________________________________________
 #  Menu principal
 # ___________________________________________________
@@ -76,6 +84,7 @@ def printMenu():
     print("4- Conocer a un director ")
     print("5- Conocer a un actor ")
     print("6- Entender un genero ")
+    print("7- Encontrar películas por país ")
     print("0- Salir")
 
 
@@ -126,6 +135,11 @@ while True:
         print("El promedio de la calificación de las películas es "+str(vote_count) +"\n")
         printList(movies)
         print("\n")
+    elif int(inputs[0]) == 7:
+        country_name = input("ingrese el nombre del país que quiere buscar\n")
+        country=controller.getMoviesByCountry(catalogo,country_name)
+        print("\n")
+        printListTuple(country)
     else:
         sys.exit(0)
 sys.exit(0)
